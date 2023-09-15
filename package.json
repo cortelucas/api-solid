@@ -7,14 +7,16 @@
     "start": "tsx src/server.ts",
     "start:dev": "tsx watch src/server.ts",
     "build": "tsup src --out-dir build",
-    "lint": "",
-    "lint:fix": ""
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@rocketseat/eslint-config": "2.1.0",
     "@types/node": "^20.6.1",
+    "eslint": "8.49.0",
     "tsup": "^7.2.0",
     "tsx": "^3.12.10",
     "typescript": "^5.2.2"
