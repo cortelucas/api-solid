@@ -2,6 +2,7 @@ import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-user
 import { hash } from 'bcryptjs'
 import { describe, expect, it } from 'vitest'
 import { AuthenticateUseCase } from './authenticate'
+import { InvalidCredentialsError } from './errors/invalid-credentials-error'
 
 describe('Authenticate use case', () => {
   it('should be able to authenticate', async () => {
@@ -20,5 +21,17 @@ describe('Authenticate use case', () => {
     })
 
     expect(user.id).toEqual(expect.any(String))
+  })
+
+  it('should not be able to authenticate with wrong email', async () => {
+    const userRepository = new InMemoryUsersRepository()
+    const sut = new AuthenticateUseCase(userRepository)
+
+    await expect(() =>
+      sut.execute({
+        email: 'any@email.com',
+        password: 'any_password',
+      }),
+    ).rejects.toBeInstanceOf(InvalidCredentialsError)
   })
 })
