@@ -1,6 +1,7 @@
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-user-repository'
 import { compare } from 'bcryptjs'
 import { describe, expect, it } from 'vitest'
+import { UserAlreadyExistsError } from './errors/user-already-exists'
 import { RegisterUseCase } from './register'
 
 describe('Register use case', () => {
@@ -21,7 +22,25 @@ describe('Register use case', () => {
       user.password_hash,
     )
 
-    console.log(user.password_hash)
     expect(isPasswordCorrectlyHashed).toBe(true)
+  })
+
+  it('should not be able to register with same email twice', async () => {
+    const usersRepository = new InMemoryUsersRepository()
+    const registerUseCase = new RegisterUseCase(usersRepository)
+
+    const email = 'any_email@corte.tech'
+
+    const newUser = {
+      name: 'Any Name',
+      email,
+      password: 'any_password',
+    }
+
+    await registerUseCase.execute(newUser)
+
+    expect(() => registerUseCase.execute(newUser)).rejects.toBeInstanceOf(
+      UserAlreadyExistsError,
+    )
   })
 })
